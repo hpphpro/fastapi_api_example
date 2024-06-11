@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  backend:
+    build: .
+    restart: always
+    container_name: backend
+    networks:
+      - backend-network
+    volumes:
+      - ./:/usr/src/project/
+    depends_on:
+      - redis
+      - postgres
+    working_dir: /usr/src/project/
+    command: /bin/sh -c 'alembic upgrade head && python -m src'
+    ports:
+      - '8080:8080'
+
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis
+    networks:
+      - backend-network
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - backend-network
+    env_file:
+      - ./.env
+    ports:
+      - '5432'
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-network:
