@@ -9,11 +9,11 @@ from src.api.common.docs import (
     NotFoundError,
     UnAuthorizedError,
 )
+from src.api.common.providers import Stub
 from src.api.common.responses import OkResponse
 from src.api.v1.handlers.auth import Authorization
 from src.api.v1.handlers.commands import CommandMediatorProtocol, GetUserQuery
 from src.common.interfaces.hasher import AbstractHasher
-from src.api.common.providers import Stub
 
 user_router = APIRouter(prefix="/users", tags=["user"])
 

@@ -18,9 +18,7 @@ class UserService:
     @on_integrity("login")
     async def create(self, data: dto.CreateUser, hasher: AbstractHasher) -> dto.User:
         data.password = hasher.hash_password(data.password)
-        result = await self._repository.create(
-            **data.model_dump(exclude={"confirm_password"})
-        )
+        result = await self._repository.create(**data.model_dump())
 
         if not result:
             raise ConflictError("This user already exists")
