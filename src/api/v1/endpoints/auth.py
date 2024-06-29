@@ -3,17 +3,17 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from src.api.common.docs import ForbiddenError, NotFoundError, UnAuthorizedError
+from src.api.common.responses import OkResponse
 from src.api.v1.handlers.auth import Authorization
 from src.api.v1.handlers.login import Login
-from src.api.common.responses import OkResponse
-from src.common.dto import Status, Tokens, TokensExpire
+from src.common.dto import Status, Token, TokensExpire
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @auth_router.post(
     "/login",
-    response_model=Tokens,
+    response_model=Token,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_404_NOT_FOUND: {"model": NotFoundError},
@@ -22,8 +22,8 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 )
 async def login_endpoint(
     login: Annotated[TokensExpire, Depends(Login())],
-) -> OkResponse[Tokens]:
-    response = OkResponse(login.tokens)
+) -> OkResponse[Token]:
+    response = OkResponse(Token(token=login.tokens.access))
     response.set_cookie(
         "refresh_token",
         value=login.tokens.refresh,
@@ -37,7 +37,7 @@ async def login_endpoint(
 
 @auth_router.post(
     "/refresh",
-    response_model=Tokens,
+    response_model=Token,
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_401_UNAUTHORIZED: {"model": UnAuthorizedError},
@@ -46,8 +46,8 @@ async def login_endpoint(
 )
 async def refresh_endpoint(
     verified: Annotated[TokensExpire, Depends(Authorization().verify_refresh)],
-) -> OkResponse[Tokens]:
-    response = OkResponse(verified.tokens)
+) -> OkResponse[Token]:
+    response = OkResponse(Token(token=verified.tokens.access))
     response.set_cookie(
         "refresh_token",
         value=verified.tokens.refresh,
