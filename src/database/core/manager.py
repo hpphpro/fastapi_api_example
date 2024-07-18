@@ -44,7 +44,6 @@ class TransactionManager:
         await self.close_transaction()
 
     async def __aenter__(self) -> TransactionManager:
-        await self.create_transaction()
         return self
 
     async def commit(self) -> None:

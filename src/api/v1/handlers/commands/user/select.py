@@ -17,5 +17,5 @@ class GetUserCommand(Command[GetUserQuery, dto.User]):
         self._gateway = gateway
 
     async def execute(self, query: GetUserQuery, **kwargs: Any) -> dto.User:
-        async with self._gateway.database.manager.session:
+        async with self._gateway:
             return await self._gateway.user().get_one(user_id=query.user_id)

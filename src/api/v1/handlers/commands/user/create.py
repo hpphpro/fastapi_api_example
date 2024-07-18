@@ -13,4 +13,6 @@ class CreateUserCommand(Command[dto.CreateUser, dto.User]):
 
     async def execute(self, query: dto.CreateUser, **kwargs: Any) -> dto.User:
         async with self._gateway:
+            await self._gateway.database.manager.create_transaction()
+            
             return await self._gateway.user().create(query, **kwargs)

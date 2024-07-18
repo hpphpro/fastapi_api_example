@@ -109,7 +109,7 @@ class Authorization(SecurityBase):
 
         if actual_token_type != token_type:
             raise ForbiddenError("Invalid token")
-        async with database.manager.session:
+        async with database:
             user = await database.user().get_one(user_id=uuid.UUID(user_id))
 
         if not user:

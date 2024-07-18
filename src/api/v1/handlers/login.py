@@ -23,7 +23,7 @@ class Login:
         jwt: Annotated[TokenJWT, Depends(Stub(TokenJWT))],
         database: Annotated[DBGateway, Depends(Stub(DBGateway))],
     ) -> dto.TokensExpire:
-        async with database.manager.session:
+        async with database:
             user = await database.user().get_one(login=body.login)
 
         if not user:
