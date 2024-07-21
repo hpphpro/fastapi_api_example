@@ -28,9 +28,9 @@ class Stub:
             return (
                 self._dependency == other._dependency and self._kwargs == other._kwargs
             )
-        else:
-            if not self._kwargs:
-                return cast(bool, self._dependency == other)
+
+        if not self._kwargs:
+            return cast(bool, self._dependency == other)
 
         return False
 

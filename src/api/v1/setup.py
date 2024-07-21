@@ -14,7 +14,8 @@ from src.core.settings import Settings
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     yield
-    await app.state.engine.dispose()
+    if hasattr(app.state, "engine"):
+        await app.state.engine.dispose()
 
 
 def init_app_v1(
