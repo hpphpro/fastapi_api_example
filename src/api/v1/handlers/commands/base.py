@@ -15,8 +15,9 @@ class CommandProtocol(Protocol):
 class Command(CommandProtocol, Generic[QT, RT]):
     __slots__ = ()
 
+    async def __call__(self, query: QT, **kwargs: Any) -> RT:
+        return await self.execute(query=query, **kwargs)
+
     @abc.abstractmethod
     async def execute(self, query: QT, **kwargs: Any) -> RT:
         raise NotImplementedError
-
-    __call__ = execute

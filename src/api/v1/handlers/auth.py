@@ -1,5 +1,5 @@
 import uuid
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Optional
 
 from fastapi import Depends, Request
 from fastapi.concurrency import run_in_threadpool
@@ -44,8 +44,10 @@ class Authorization(SecurityBase):
     ) -> TokensExpire:
         token = request.cookies.get("refresh_token", "")
         user = await self._verify_token(jwt, database, token, "refresh")
+        
         token_pairs = await cache.get_list(str(user.id))
-        verified = None
+        verified: Optional[str] = None
+
         for pair in token_pairs:
             data = pair.split("::")
             if len(data) < 2:
